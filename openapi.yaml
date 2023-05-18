@@ -1,0 +1,49 @@
+openapi: 3.0.1
+info:
+  title: Solving Linear Programming Plugin
+  description: A plugin that allows the user to solve linear programming problem using ChatGPT. If you do not know the user's username, ask them first before making queries to the plugin. Otherwise, use the username "global".
+  version: 'v1'
+servers:
+  - url: http://localhost:5003
+paths:
+  /MLP/{username}:
+    post:
+      operationId: solve
+      summary: Solve Linear Programming(.lp file) and return the solution
+      parameters:
+      - in: path
+        name: username
+        schema:
+            type: string
+        required: true
+        description: The name of the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/solveRequest'
+      responses:
+        '200':
+          description: Solution for the LP file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  solution:
+                    type: object
+
+components:
+  schemas:
+    solveRequest:
+      type: object
+      required:
+      - fomulafile
+      properties:
+        fomulafile:
+          type: string
+          format: binary
+          description: The .lp file to be solved
