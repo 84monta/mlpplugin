@@ -43,9 +43,12 @@ Check Portfowarding Setting
 netsh interface portproxy show all
 ```
 
-#FAQ
+# FAQ
+
 Q1: Something wrong...
-A1: Yes...(This may be resolved by upgrading the ChatGPT version)
+
+A1: Yes...(Wait ChatGPT version up)
 
 Q2:The formulation is wrong.
+
 A2:Set up a more detailed problem set.
