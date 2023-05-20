@@ -1,6 +1,6 @@
 {
     "schema_version": "v1",
-    "name_for_human": "LP Plugin (no auth)",
+    "name_for_human": "MLP Plugin (no auth)",
     "name_for_model": "MLPPlugin",
     "description_for_human": "Plugin for solve linear programming problem.",
     "description_for_model": "Plugin for solve linear programming problem. You can request to solve linear programming problems in lp file format and get the solution",

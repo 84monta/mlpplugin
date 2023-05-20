@@ -6,29 +6,42 @@ from quart import request, jsonify
 import tempfile
 from pyscipopt import Model
 
+
+
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
 @app.post("/MLP/<string:username>")
 async def solve(username):
-    req_data = await request.get_json()
-    fomulafile_txt = req_data["fomulafile"]
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".lp") as temp:
-        temp.write(fomulafile_txt.encode())  
-        temp_name = temp.name 
-        
-    model = Model()
-    model.readProblem(temp_name)
-    model.optimize()
-    
-    # #set result to dict
-    result = {}
-    result["status"] = model.getStatus()
-    result["objval"] = model.getObjVal()
-    #convert all variables and values to dict
-    result["sol"] = {}
-    for v in model.getVars():
-        result["sol"][v.name] = model.getVal(v)
-    response_txt = json.dumps(result)
+    try:
+        req_data = await request.get_json()
+        fomulafile_txt = req_data["fomulafile"]
+        with tempfile.NamedTemporaryFile(delete=False,suffix=".lp") as temp:
+            temp.write(fomulafile_txt.encode())
+            temp_name = temp.name
+        model = Model()
+        model.readProblem(temp_name)
+        model.optimize()
+
+        # #set result to dict
+        result = {}
+        result["status"] = model.getStatus()
+
+        # if variable number is 0 return error
+        if model.getNVars() == 0:
+            result["status"] = ".lp file difinition Error\n.fix it and try again"
+        elif result["status"] == "optimal":
+            result["objval"] = model.getObjVal()
+            #convert all variables and values to dict
+            result["sol"] = {}
+            for v in model.getVars():
+                result["sol"][v.name] = model.getVal(v)
+        else:
+            result["objval"] = None
+            result["sol"] = None
+            
+        response_txt = json.dumps(result)
+    except Exception as e:
+        response_txt = e.__class__.__name__ + ": " + str(e)
     
     return jsonify(response_txt)
 
